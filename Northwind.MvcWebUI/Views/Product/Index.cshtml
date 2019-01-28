@@ -1,0 +1,78 @@
+﻿@model Northwind.MvcWebUI.Models.ProductIndexModel
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                    </tr>
+                    @foreach (var category in Model.categories)
+                    {
+                        <tr>
+                            <td>@Html.RouteLink(category.CategoryName, new { c = category.CategoryID, controller = "Product", action="Index" })</td>
+                        </tr>
+
+                    }
+                </thead>
+            </table>
+        </div>
+        <div class="col-md-10">
+            <div class="row">
+                <div class="colmd-12">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item @(string.IsNullOrEmpty(Model.currentCategoryName) ? "active" : "")" aria-current="page">Home</li>
+                            @if(!string.IsNullOrEmpty(Model.currentCategoryName))
+                            {
+                                <li class="breadcrumb-item active" aria-current="page">@Model.currentCategoryName</li>
+                            }
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Unit Price</th>
+                        <th>In stock</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                @foreach (var product in Model.products)
+                {
+                    <tr>                        
+                        <td>@product.ProductID</td>
+                        <td>@product.ProductName</td>
+                        <td>@product.UnitPrice.ToString("c")</td>
+                        <td>@product.UnitsInstock</td>
+                        <td>
+                            @using (Html.BeginForm("AddtoCart", "Cart"))
+                            {
+                                @Html.Hidden("productId", product.ProductID)
+                                <input type="submit" value="Add To Cart" />
+                            }
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td>Total @Model.PagingInfo.totalProductCount @(Model.PagingInfo.totalProductCount > 1 ? "items" : "item") found. @(Model.PagingInfo.currentPage * Model.PagingInfo.pageSize) @(Model.PagingInfo.totalProductCount > 1 ? "items" : "item") shown.</td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end">
+                    @Html.Pager(Model.PagingInfo)
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
